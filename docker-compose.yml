@@ -1,0 +1,56 @@
+version: "3.2"
+
+services:
+  app:
+    image: gkmr/jumanpp-api
+    container_name: juman_api
+    restart: always
+    stdin_open: true
+    networks:
+      - juman
+
+  jupyter:
+    build: ./jupyter
+    container_name: juman_jupyter
+    restart: always
+    stdin_open: true
+    ports:
+    - 8888:8888
+    volumes:
+    - ./jupyter:${main_dir}
+    env_file:
+    - ./jupyter/conf/secrets.env
+    entrypoint: /usr/bin/env bash
+    command: setup.sh
+    networks:
+      - juman
+
+  flask:
+    build: flask
+    tty: true
+    stdin_open: true
+    restart: always
+    user: root
+    entrypoint: gunicorn
+    command: --workers=2 app:api -b 0.0.0.0:5000
+    volumes:
+    - ./flask:/tmp/flask
+    networks:
+      - juman
+
+  nginx:
+    build: nginx
+    tty: true
+    stdin_open: true
+    restart: always
+    user: root
+    ports:
+    - 9000:9000
+    volumes:
+    - ./nginx:/etc/nginx
+    networks:
+      - juman
+
+networks:
+  juman:
+

@@ -1,0 +1,10 @@
+lightgbm
+pandas
+numpy
+keras
+awscli
+boto3
+jupyter
+requests
+jupyter_contrib_nbextensions
+plotly
